@@ -4,10 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Katy Pretty — Предсказание</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
 <style>
+  @font-face{
+    font-family:'Logo Serif';
+    src:url('./LiberationSerif-Bold.ttf') format('truetype');
+    font-weight:700;
+    font-style:normal;
+    font-display:swap;
+  }
   :root{
     --ink:#150c1a;
     --plum:#5c2a6b;
@@ -103,20 +107,20 @@
     gap:2px;
   }
   .monogram{
-    width:clamp(72px, 20vw, 108px);
+    width:clamp(96px, 26vw, 140px);
     height:auto;
-    margin-bottom:6px;
+    margin-bottom:8px;
     overflow:visible;
   }
   .monogram text{
-    font-family:'EB Garamond', Georgia, serif;
+    font-family:'Logo Serif', Georgia, 'Times New Roman', serif;
     font-weight:700;
     font-size:460px;
   }
   .monogram .mono-k{ fill:var(--ink); }
   .monogram .mono-p{ fill:var(--ink); }
   .wordmark{
-    font-family:'EB Garamond', Georgia, serif;
+    font-family:'Logo Serif', Georgia, 'Times New Roman', serif;
     font-weight:700;
     color:var(--ink);
     line-height:1;
@@ -241,9 +245,9 @@
   <div class="stage">
     <div id="intro">
       <div class="logo">
-        <svg class="monogram" viewBox="0 0 560 500" aria-hidden="true">
+        <svg class="monogram" viewBox="0 0 780 500" aria-hidden="true">
           <text x="30" y="440" class="mono-k">K</text>
-          <text x="30" y="440" class="mono-p">P</text>
+          <text x="316" y="440" class="mono-p">P</text>
         </svg>
         <div class="wordmark">
           <span class="drop">K</span><span class="small">aty</span>
