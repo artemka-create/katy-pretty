@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Katy Pretty — Предсказание</title>
+<style>
+  :root{
+    --ink:#141014;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:'Helvetica Neue', Arial, sans-serif;
+    overflow:hidden;
+    color:var(--ink);
+  }
+  body{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    min-height:100dvh;
+  }
+
+  /* ---------- animated gradient background ---------- */
+  #bg{
+    position:fixed; inset:0; z-index:0;
+    background:
+      radial-gradient(circle at 20% 20%, #f3d9ea 0%, transparent 45%),
+      radial-gradient(circle at 80% 15%, #7a3d8f 0%, transparent 55%),
+      radial-gradient(circle at 15% 80%, #5a2168 0%, transparent 50%),
+      radial-gradient(circle at 85% 85%, #e9c9e8 0%, transparent 50%),
+      linear-gradient(135deg, #f7ecf5, #f0d8ec 40%, #b06bc9 70%, #4a1a5c 100%);
+    background-size:220% 220%, 220% 220%, 220% 220%, 220% 220%, 300% 300%;
+    animation:drift 18s ease-in-out infinite;
+    filter:blur(30px) saturate(115%);
+    transition:filter 1.2s ease;
+  }
+  body.active #bg{
+    animation-duration:9s;
+    filter:blur(45px) saturate(140%);
+  }
+  @keyframes drift{
+    0%{background-position:0% 0%, 100% 0%, 0% 100%, 100% 100%, 0% 50%;}
+    25%{background-position:30% 40%, 70% 30%, 30% 70%, 70% 60%, 50% 30%;}
+    50%{background-position:70% 60%, 30% 70%, 70% 30%, 30% 40%, 100% 70%;}
+    75%{background-position:40% 80%, 60% 20%, 40% 20%, 60% 80%, 30% 100%;}
+    100%{background-position:0% 0%, 100% 0%, 0% 100%, 100% 100%, 0% 50%;}
+  }
+
+  .stage{
+    position:relative; z-index:2;
+    width:100%; max-width:520px;
+    padding:32px;
+    display:flex; flex-direction:column; align-items:center;
+    text-align:center;
+  }
+
+  /* ---------- intro screen ---------- */
+  #intro{
+    display:flex; flex-direction:column; align-items:center;
+    gap:44px;
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  #intro.hide{
+    opacity:0; transform:scale(.94);
+    pointer-events:none;
+    visibility:hidden;
+  }
+  .logo{
+    display:flex; flex-direction:column; align-items:center;
+    gap:6px;
+  }
+  .logo .mark{
+    font-weight:800;
+    font-size:15vw;
+    max-font-size:64px;
+    line-height:0.92;
+    letter-spacing:0.02em;
+    color:var(--ink);
+    text-transform:uppercase;
+    font-size:clamp(38px, 12vw, 62px);
+  }
+  .logo .sub{
+    font-weight:700;
+    font-size:clamp(14px, 4.2vw, 20px);
+    letter-spacing:0.35em;
+    text-transform:uppercase;
+    color:#5c2a6b;
+    margin-top:-2px;
+  }
+  .logo .tagline{
+    font-size:clamp(12px, 3.4vw, 14px);
+    letter-spacing:0.08em;
+    color:#3d2144;
+    opacity:.75;
+    margin-top:10px;
+  }
+
+  #predictBtn{
+    appearance:none; border:none; cursor:pointer;
+    background:var(--ink);
+    color:#fff;
+    font-size:16px;
+    font-weight:600;
+    letter-spacing:0.03em;
+    padding:18px 38px;
+    border-radius:40px;
+    box-shadow:0 10px 30px rgba(30,10,40,0.25);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  #predictBtn:active{
+    transform:scale(0.96);
+    box-shadow:0 6px 16px rgba(30,10,40,0.25);
+  }
+
+  /* ---------- result screen ---------- */
+  #result{
+    position:absolute; inset:0; z-index:3;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:26px;
+    padding:40px 30px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .6s ease;
+  }
+  #result.show{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .label{
+    font-size:12px;
+    letter-spacing:0.35em;
+    text-transform:uppercase;
+    color:#4a2154;
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity .6s ease .15s, transform .6s ease .15s;
+  }
+  #result.show .label{ opacity:.8; transform:translateY(0); }
+
+  .prediction{
+    font-family:Georgia, 'Times New Roman', serif;
+    font-style:italic;
+    font-size:clamp(22px, 6vw, 30px);
+    line-height:1.45;
+    color:var(--ink);
+    max-width:440px;
+    opacity:0;
+    transform:translateY(14px) scale(.98);
+    transition:opacity .8s ease .35s, transform .8s ease .35s;
+  }
+  #result.show .prediction{ opacity:1; transform:translateY(0) scale(1); }
+
+  .heart{
+    width:34px; height:30px;
+    opacity:0;
+    transition:opacity .8s ease .6s;
+  }
+  #result.show .heart{ opacity:.8; }
+
+  #againBtn{
+    appearance:none; border:1.5px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.05em;
+    padding:12px 26px;
+    border-radius:40px;
+    cursor:pointer;
+    opacity:0;
+    transition:opacity .8s ease .8s, background .2s ease, color .2s ease;
+  }
+  #result.show #againBtn{ opacity:.85; }
+  #againBtn:active{ background:var(--ink); color:#fff; }
+
+  .signature{
+    font-family:'Brush Script MT', cursive;
+    font-size:15px;
+    color:#3d2144;
+    opacity:0;
+    transition:opacity .8s ease .9s;
+  }
+  #result.show .signature{ opacity:.65; }
+</style>
+</head>
+<body>
+
+  <div id="bg"></div>
+
+  <div class="stage">
+    <div id="intro">
+      <div class="logo">
+        <div class="mark">Katy Pretty</div>
+        <div class="sub">Стиль — это выбор</div>
+        <div class="tagline">узнай, что готовит тебе стиль сегодня</div>
+      </div>
+      <button id="predictBtn">Предсказать будущее</button>
+    </div>
+  </div>
+
+  <div id="result">
+    <div class="label">Твоё предсказание</div>
+    <div class="prediction" id="predictionText"></div>
+    <svg class="heart" viewBox="0 0 34 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17 27C17 27 2 18 2 9.5C2 4.8 5.6 2 9.3 2C12.3 2 15 4 17 7C19 4 21.7 2 24.7 2C28.4 2 32 4.8 32 9.5C32 18 17 27 17 27Z" stroke="#3d2144" stroke-width="1.6"/>
+    </svg>
+    <button id="againBtn">Ещё раз</button>
+    <div class="signature">с любовью, команда Katy Pretty</div>
+  </div>
+
+<script>
+  const predictions = [
+    "Сегодня твой выбор наряда станет твоим лучшим решением дня.",
+    "Скоро в твоём гардеробе появится вещь, в которой ты почувствуешь себя увереннее.",
+    "Уверенность — твой лучший аксессуар на этой неделе.",
+    "Тебя ждёт комплимент за платье, которое ты чуть не оставила на вешалке.",
+    "Пора позволить себе то яркое платье, которое давно приглянулось.",
+    "Новый образ откроет в тебе смелость, о которой ты забыла.",
+    "Твоя интуиция в выборе наряда не подведёт — доверяй ей.",
+    "Скоро случится момент, когда ты наденешь что-то и почувствуешь: «это по-настоящему я».",
+    "Стоит примерить цвет, который раньше казался «не твоим».",
+    "Правильно подобранный образ сегодня принесёт тебе удачу.",
+    "Кто-то спросит, где ты купила это платье — и это будет комплимент.",
+    "Пришло время убрать из шкафа то, что давно не радует, и освободить место для нового.",
+    "Твой безупречный образ сегодня притягивает восхищённые взгляды.",
+    "Хорошо сидящее платье способно изменить не только фигуру, но и настроение.",
+    "Простой силуэт станет твоим главным украшением на этой неделе.",
+    "Тебя ждёт встреча, где твой наряд скажет больше слов.",
+    "Пора вернуть в гардероб любимое платье — оно снова в моде.",
+    "Маленькая деталь — пояс, серьги, шаль — изменит весь образ.",
+    "Твой гардероб — это твоя история, и в ней открывается новая глава.",
+    "Сегодня удачный день, чтобы примерить что-то смелее обычного.",
+    "Ты вдохновишь кого-то своим образом, даже не заметив этого.",
+    "Впереди повод, для которого стоит выбрать особенное платье.",
+    "Доверие к себе — вот что сделает твой образ безупречным сегодня.",
+    "Тебе идёт быть собой больше, чем любой тренд.",
+    "Скоро любимое платье из прошлого сезона заиграет по-новому.",
+    "Внутренний голос подскажет верный наряд для важного дня.",
+    "Ты заслуживаешь новое платье — даже без особого повода.",
+    "Женственность — это не образ, а состояние, и сегодня оно с тобой."
+  ];
+
+  const introEl = document.getElementById('intro');
+  const resultEl = document.getElementById('result');
+  const predictBtn = document.getElementById('predictBtn');
+  const againBtn = document.getElementById('againBtn');
+  const predictionText = document.getElementById('predictionText');
+  const body = document.body;
+
+  let lastIndex = -1;
+  function pickPrediction(){
+    let i;
+    do { i = Math.floor(Math.random() * predictions.length); }
+    while (i === lastIndex && predictions.length > 1);
+    lastIndex = i;
+    return predictions[i];
+  }
+
+  function reveal(){
+    predictionText.textContent = pickPrediction();
+    body.classList.add('active');
+    introEl.classList.add('hide');
+    setTimeout(() => resultEl.classList.add('show'), 550);
+  }
+
+  function reset(){
+    resultEl.classList.remove('show');
+    setTimeout(() => {
+      body.classList.remove('active');
+      introEl.classList.remove('hide');
+    }, 400);
+  }
+
+  predictBtn.addEventListener('click', reveal);
+  againBtn.addEventListener('click', reset);
+</script>
+
+</body>
+</html>
