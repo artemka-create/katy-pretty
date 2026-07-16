@@ -5,13 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Katy Pretty — Предсказание</title>
 <style>
-  @font-face{
-    font-family:'Logo Serif';
-    src:url('./LiberationSerif-Bold.ttf') format('truetype');
-    font-weight:700;
-    font-style:normal;
-    font-display:swap;
-  }
   :root{
     --ink:#150c1a;
     --plum:#5c2a6b;
@@ -35,52 +28,78 @@
     min-height:100dvh;
   }
 
-  /* ---------- animated gradient background : always alive, iridescent ---------- */
+  /* ---------- animated gradient background : soft merging circles, slow-mo but alive ---------- */
   #bg{
     position:fixed; inset:0; z-index:0; overflow:hidden;
     background:#f8ecf6;
   }
-  #bg .layer{
-    position:absolute; inset:-15%;
+  #bg .blob{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(70px);
+    will-change:transform;
+    transition:animation-duration 1.2s ease, filter 1.2s ease, opacity 1.2s ease;
   }
-  #bg .l1{
-    background:
-      radial-gradient(circle at 20% 20%, #f6d9ee 0%, transparent 45%),
-      radial-gradient(circle at 80% 15%, #8a3d95 0%, transparent 55%),
-      radial-gradient(circle at 15% 80%, #5a2168 0%, transparent 50%),
-      radial-gradient(circle at 85% 85%, #f0b8de 0%, transparent 50%),
-      linear-gradient(135deg, #f8ecf6, #f0d8ec 40%, #b25bc9 70%, #4a1a5c 100%);
-    background-size:220% 220%, 220% 220%, 220% 220%, 220% 220%, 300% 300%;
-    animation:drift 11s ease-in-out infinite;
-    filter:blur(30px) saturate(120%);
-    transition:filter 1s ease, animation-duration 1s ease;
+  #bg .b1{
+    width:70vmax; height:70vmax; left:-20vmax; top:-15vmax;
+    background:radial-gradient(circle, #f6d9ee 0%, rgba(246,217,238,0) 70%);
+    animation:float1 26s ease-in-out infinite;
   }
-  #bg .l2{
-    background:conic-gradient(from 0deg at 50% 50%,
-      #f6d9ee, #c974c6, #5a2168, #a24fa0, #f0bfe0, #f6d9ee);
-    mix-blend-mode:soft-light;
-    opacity:.65;
-    animation:spin 16s linear infinite;
-    transition:animation-duration 1s ease, opacity 1s ease;
+  #bg .b2{
+    width:75vmax; height:75vmax; right:-25vmax; top:-20vmax;
+    background:radial-gradient(circle, #9b4fa0 0%, rgba(155,79,160,0) 70%);
+    animation:float2 32s ease-in-out infinite;
+    opacity:.85;
   }
-  body.active #bg .l1{
-    animation-duration:6.5s;
-    filter:blur(46px) saturate(150%);
-  }
-  body.active #bg .l2{
-    animation-duration:9s;
+  #bg .b3{
+    width:65vmax; height:65vmax; left:-15vmax; bottom:-20vmax;
+    background:radial-gradient(circle, #5a2168 0%, rgba(90,33,104,0) 70%);
+    animation:float3 30s ease-in-out infinite;
     opacity:.8;
   }
-  @keyframes drift{
-    0%{background-position:0% 0%, 100% 0%, 0% 100%, 100% 100%, 0% 50%;}
-    25%{background-position:30% 40%, 70% 30%, 30% 70%, 70% 60%, 50% 30%;}
-    50%{background-position:70% 60%, 30% 70%, 70% 30%, 30% 40%, 100% 70%;}
-    75%{background-position:40% 80%, 60% 20%, 40% 20%, 60% 80%, 30% 100%;}
-    100%{background-position:0% 0%, 100% 0%, 0% 100%, 100% 100%, 0% 50%;}
+  #bg .b4{
+    width:60vmax; height:60vmax; right:-18vmax; bottom:-15vmax;
+    background:radial-gradient(circle, #f0b8de 0%, rgba(240,184,222,0) 70%);
+    animation:float4 24s ease-in-out infinite;
   }
-  @keyframes spin{
-    0%{transform:rotate(0deg) scale(1.2);}
-    100%{transform:rotate(360deg) scale(1.2);}
+  #bg .b5{
+    width:50vmax; height:50vmax; left:25vmax; top:20vmax;
+    background:radial-gradient(circle, #c874c6 0%, rgba(200,116,198,0) 70%);
+    animation:float5 28s ease-in-out infinite;
+    opacity:.6;
+  }
+  body.active #bg .blob{
+    filter:blur(85px);
+  }
+  body.active #bg .b1{ animation-duration:16s; }
+  body.active #bg .b2{ animation-duration:19s; opacity:.95; }
+  body.active #bg .b3{ animation-duration:18s; opacity:.9; }
+  body.active #bg .b4{ animation-duration:15s; }
+  body.active #bg .b5{ animation-duration:17s; opacity:.75; }
+
+  @keyframes float1{
+    0%,100%{transform:translate(0,0) scale(1);}
+    33%{transform:translate(12vmax,10vmax) scale(1.12);}
+    66%{transform:translate(4vmax,18vmax) scale(0.95);}
+  }
+  @keyframes float2{
+    0%,100%{transform:translate(0,0) scale(1);}
+    30%{transform:translate(-14vmax,12vmax) scale(0.9);}
+    65%{transform:translate(-6vmax,-8vmax) scale(1.15);}
+  }
+  @keyframes float3{
+    0%,100%{transform:translate(0,0) scale(1);}
+    40%{transform:translate(10vmax,-12vmax) scale(1.1);}
+    70%{transform:translate(16vmax,-2vmax) scale(0.92);}
+  }
+  @keyframes float4{
+    0%,100%{transform:translate(0,0) scale(1);}
+    35%{transform:translate(-10vmax,-14vmax) scale(1.08);}
+    68%{transform:translate(-16vmax,-4vmax) scale(0.96);}
+  }
+  @keyframes float5{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(-8vmax,10vmax) scale(1.2);}
   }
 
   .stage{
@@ -107,32 +126,13 @@
     gap:2px;
   }
   .monogram{
-    width:clamp(96px, 26vw, 140px);
+    width:clamp(88px, 24vw, 128px);
     height:auto;
-    margin-bottom:8px;
-    overflow:visible;
+    margin-bottom:10px;
   }
-  .monogram text{
-    font-family:'Logo Serif', Georgia, 'Times New Roman', serif;
-    font-weight:700;
-    font-size:460px;
-  }
-  .monogram .mono-k{ fill:var(--ink); }
-  .monogram .mono-p{ fill:var(--ink); }
-  .wordmark{
-    font-family:'Logo Serif', Georgia, 'Times New Roman', serif;
-    font-weight:700;
-    color:var(--ink);
-    line-height:1;
-    font-size:clamp(30px, 9vw, 46px);
-  }
-  .wordmark .drop{
-    font-size:1.6em;
-  }
-  .wordmark .small{
-    font-size:.66em;
-    letter-spacing:.12em;
-    text-transform:uppercase;
+  .wordmark-img{
+    width:clamp(220px, 62vw, 360px);
+    height:auto;
   }
   .logo .sub{
     font-weight:700;
@@ -240,19 +240,19 @@
 </head>
 <body>
 
-  <div id="bg"><div class="layer l1"></div><div class="layer l2"></div></div>
+  <div id="bg">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+    <div class="blob b5"></div>
+  </div>
 
   <div class="stage">
     <div id="intro">
       <div class="logo">
-        <svg class="monogram" viewBox="0 0 780 500" aria-hidden="true">
-          <text x="30" y="440" class="mono-k">K</text>
-          <text x="316" y="440" class="mono-p">P</text>
-        </svg>
-        <div class="wordmark">
-          <span class="drop">K</span><span class="small">aty</span>
-          <span class="drop">P</span><span class="small">retty</span>
-        </div>
+        <img class="monogram" src="./logo_monogram.png" alt="KP" />
+        <img class="wordmark-img" src="./logo_wordmark.png" alt="Katy Pretty" />
         <div class="sub">Стиль — это выбор</div>
         <div class="tagline">нажми на кнопку — и узнай, что тебя ждёт</div>
       </div>
